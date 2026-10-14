@@ -2,7 +2,7 @@
 
 #ifndef GOAT_H
 #define GOAT_H
-#include <iostream>
+#include <string>
 using namespace std;
 
 class Goat {
@@ -12,7 +12,10 @@ private:
     string color;
 public: 
     Goat()                          { name = ""; age = 0; color = ""; }
-    // write three more constructors
+    // start with a name and default the remaining fields
+    Goat(string n) : name(n), age(0), color("") {}
+    Goat(string n, int a) : name(n), age(a), color("") {}
+    Goat(string n, int a, string c) : name(n), age(a), color(c) {}
 
     // setters and getters
     void set_name(string n)         { name = n; };
