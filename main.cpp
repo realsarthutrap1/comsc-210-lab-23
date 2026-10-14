@@ -11,12 +11,12 @@
 #include "Goat.h"
 using namespace std;
 
-const int SZ_NAMES = 200, SZ_COLORS = 25;
+const int SZ_NAMES = 200, SZ_COLORS = 25, MAX_AGE = 20;
 
-int select_goat(list<Goat> trip);
+int select_goat(const list<Goat>& trip);
 void delete_goat(list<Goat> &trip);
 void add_goat(list<Goat> &trip, string [], string []);
-void display_trip(list<Goat> trip);
+void display_trip(const list<Goat>& trip);
 int main_menu();
 
 int main() {
@@ -43,18 +43,19 @@ int main() {
     fin1.close();
 
     // keep the menu running until the user quits
+    list<Goat> trip;
     int choice;
     do {
         choice = main_menu();
         switch (choice) {
         case 1:
-            cout << "Adding goats will be available in the next milestone." << endl;
+            add_goat(trip, names, colors);
             break;
         case 2:
-            cout << "Deleting goats will be available in the next milestone." << endl;
+            delete_goat(trip);
             break;
         case 3:
-            cout << "Listing goats will be available in the next milestone." << endl;
+            display_trip(trip);
             break;
         case 4:
             cout << "Goodbye!" << endl;
@@ -87,4 +88,58 @@ int main_menu() {
 
         cout << "Please enter a number from 1 to 4." << endl;
     }
+}
+
+void add_goat(list<Goat>& trip, string names[], string colors[]) {
+    string name = names[rand() % SZ_NAMES];
+    string color = colors[rand() % SZ_COLORS];
+    int age = rand() % (MAX_AGE + 1);
+    trip.push_back(Goat(name, age, color));
+}
+
+void display_trip(const list<Goat>& trip) {
+    if (trip.empty()) {
+        cout << "No goats in the trip." << endl;
+        return;
+    }
+
+    int number = 1;
+    for (const Goat& goat : trip) {
+        cout << "    [" << number++ << "] " << goat.get_name()
+             << " (" << goat.get_age() << ", " << goat.get_color() << ")" << endl;
+    }
+}
+
+int select_goat(const list<Goat>& trip) {
+    display_trip(trip);
+    if (trip.empty())
+        return 0;
+
+    while (true) {
+        cout << "Goat number --> ";
+        string input;
+        if (!getline(cin, input))
+            return 0;
+
+        istringstream entry(input);
+        int number;
+        char extra;
+        if (entry >> number && !(entry >> extra) && number >= 1 &&
+            static_cast<size_t>(number) <= trip.size())
+            return number;
+
+        cout << "Please enter a number from 1 to " << trip.size() << "." << endl;
+    }
+}
+
+void delete_goat(list<Goat>& trip) {
+    int number = select_goat(trip);
+    if (number == 0)
+        return;
+
+    // walk to the selected goat rather than matching its name
+    auto goat = trip.begin();
+    for (int i = 1; i < number; ++i)
+        ++goat;
+    trip.erase(goat);
 }
