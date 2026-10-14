@@ -67,7 +67,7 @@ int main() {
 }
 
 int main_menu() {
-    cout << "*** GOAT MANAGER 3001 ***\n"
+    cout << "\n*** GOAT MANAGER 3001 ***\n"
          << "[1] Add a goat\n"
          << "[2] Delete a goat\n"
          << "[3] List goats\n"
@@ -95,9 +95,11 @@ void add_goat(list<Goat>& trip, string names[], string colors[]) {
     string color = colors[rand() % SZ_COLORS];
     int age = rand() % (MAX_AGE + 1);
     trip.push_back(Goat(name, age, color));
+    cout << "\nAdded: " << name << " (" << age << ", " << color << ")" << endl;
 }
 
 void display_trip(const list<Goat>& trip) {
+    cout << "\nGoats in current trip: " << trip.size() << endl;
     if (trip.empty()) {
         cout << "No goats in the trip." << endl;
         return;
@@ -118,8 +120,10 @@ int select_goat(const list<Goat>& trip) {
     while (true) {
         cout << "Goat number --> ";
         string input;
-        if (!getline(cin, input))
+        if (!getline(cin, input)) {
+            cout << "\nDeletion canceled: input ended." << endl;
             return 0;
+        }
 
         istringstream entry(input);
         int number;
@@ -133,6 +137,11 @@ int select_goat(const list<Goat>& trip) {
 }
 
 void delete_goat(list<Goat>& trip) {
+    if (trip.empty()) {
+        cout << "\nNo goats to delete. Add a goat first." << endl;
+        return;
+    }
+    cout << "\nSelect a goat to delete." << endl;
     int number = select_goat(trip);
     if (number == 0)
         return;
@@ -141,5 +150,7 @@ void delete_goat(list<Goat>& trip) {
     auto goat = trip.begin();
     for (int i = 1; i < number; ++i)
         ++goat;
+    cout << "Deleted: " << goat->get_name() << " (" << goat->get_age()
+         << ", " << goat->get_color() << ")" << endl;
     trip.erase(goat);
 }
